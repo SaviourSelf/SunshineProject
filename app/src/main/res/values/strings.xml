@@ -5,6 +5,6 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_location_label">Location</string>
-    <string name="pref_location_default">Mountain View</string>
-    <string name="pref_location_key">key</string>
+    <string name="pref_location_default">48226</string>
+    <string name="pref_location_key">90210</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.example.justinlewis.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -47,10 +49,6 @@ public class MainActivityFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
-
-        //48226
-
-        //api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&appid=7af6cd3101333d42fdf98d63ac13c681
 
         System.out.println("Created!");
         ArrayList<String> list = new ArrayList<String>();
@@ -106,7 +104,9 @@ public class MainActivityFragment extends Fragment {
         if (id == R.id.action_refresh)
         {
             FetchWeatherTask t = new FetchWeatherTask();
-            t.execute("90210");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+            t.execute(location);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -123,7 +123,6 @@ public class MainActivityFragment extends Fragment {
 
         private String buildUrl()
         {
-            //http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&appid=7af6cd3101333d42fdf98d63ac13c681
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
                     .authority("api.openweathermap.org")
