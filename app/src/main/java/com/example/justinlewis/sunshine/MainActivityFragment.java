@@ -50,28 +50,11 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
-        System.out.println("Created!");
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("today - sunny - 88/63");
-        list.add("tomorrow - foggy - 70/46");
-        list.add("weds - cloudy - 72/63");
-        list.add("thur - rainy - 72/63");
-        list.add("fri - foggy - 72/63");
-        list.add("sat - sunny - 72/63");
-        list.add("today - sunny - 88/63");
-        list.add("tomorrow - foggy - 70/46");
-        list.add("weds - cloudy - 72/63");
-        list.add("thur - rainy - 72/63");
-        list.add("fri - foggy - 72/63");
-        list.add("sat - sunny - 72/63");
-
-        //new FetchWeatherTask().readWeatherData();
-
         mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                list);
+                new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -93,6 +76,14 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        updateWeather();
+    }
+
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
@@ -103,13 +94,18 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh)
         {
-            FetchWeatherTask t = new FetchWeatherTask();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-            t.execute(location);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateWeather()
+    {
+        FetchWeatherTask t = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        t.execute(location);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
