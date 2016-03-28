@@ -129,8 +129,8 @@ public class MainActivityFragment extends Fragment {
                     .appendQueryParameter("q", this.postalCode)
                     .appendQueryParameter("mode", "json")
                     .appendQueryParameter("units","metric")
-                    .appendQueryParameter("cnt","7")
-                    .appendQueryParameter("appid","7af6cd3101333d42fdf98d63ac13c681");
+                    .appendQueryParameter("cnt", "7")
+                    .appendQueryParameter("appid",BuildConfig.WEATHER_API_KEY);
             Log.v(LOG_TAG, builder.build().toString());
             return builder.build().toString();
         }

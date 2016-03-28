@@ -15,8 +15,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                variant.buildConfigField "String", "WEATHER_API_KEY", "\"" + getApiKey() + "\""
+            }
         }
     }
+}
+
+def getApiKey(){
+    def Properties props = new Properties()
+    props.load(new FileInputStream(new File('weatherkey.properties.txt')))
+    return props['WEATHER_API_KEY']
 }
 
 dependencies {
