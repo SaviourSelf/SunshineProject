@@ -106,7 +106,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         String locationSetting = Utility.getPreferredLocation(getActivity());
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, System.currentTimeMillis());
-        return new CursorLoader(getActivity(), weatherForLocationUri, null, null, null, sortOrder);
+        return new CursorLoader(getActivity(), weatherForLocationUri, FORECAST_COLUMNS, null, null, sortOrder);
     }
 
     @Override
