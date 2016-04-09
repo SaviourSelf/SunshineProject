@@ -1,6 +1,7 @@
 package com.example.justinlewis.sunshine;
 
 import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -40,7 +41,9 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private ArrayAdapter<String> mForecastAdapter;
+    private static final int FORECAST_LOADER = 0;
+    //private ArrayAdapter<String> mForecastAdapter;
+    private ForecastAdapter mForecastAdapter;
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     public MainActivityFragment() {
@@ -53,28 +56,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
-        mForecastAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_forecast,
-                R.id.list_item_forecast_textview,
-                new ArrayList<String>());
+        mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         ListView l = (ListView) rootView.findViewById(R.id.listview_forecast);
         l.setAdapter(mForecastAdapter);
-
-
-        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String forecast = mForecastAdapter.getItem(position);
-                //Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(intent);
-            }
-        });
         return rootView;
     }
 
@@ -106,7 +93,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void updateWeather()
     {
         //FetchWeatherTask t = new FetchWeatherTask();
-        FetchWeatherAsync t = new FetchWeatherAsync(this.getContext(), mForecastAdapter);
+        FetchWeatherAsync t = new FetchWeatherAsync(getActivity());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         t.execute(location);
@@ -114,12 +101,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, System.currentTimeMillis());
+        return new CursorLoader(getActivity(), weatherForLocationUri, null, null, null, sortOrder);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        mForecastAdapter.swapCursor(data);
     }
 
     @Override
@@ -343,10 +333,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         @Override
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
-            mForecastAdapter.clear();
+//            mForecastAdapter.clear();
             for(String dayForcast : strings)
             {
-                mForecastAdapter.add(dayForcast);
+//                mForecastAdapter.add(dayForcast);
             }
         }
     }
