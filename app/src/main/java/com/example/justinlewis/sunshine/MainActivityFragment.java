@@ -1,6 +1,8 @@
 package com.example.justinlewis.sunshine;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -36,7 +38,7 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ArrayAdapter<String> mForecastAdapter;
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
@@ -103,10 +105,26 @@ public class MainActivityFragment extends Fragment {
 
     public void updateWeather()
     {
-        FetchWeatherTask t = new FetchWeatherTask();
+        //FetchWeatherTask t = new FetchWeatherTask();
+        FetchWeatherAsync t = new FetchWeatherAsync(this.getContext(), mForecastAdapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         t.execute(location);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
